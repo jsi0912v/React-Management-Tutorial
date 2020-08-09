@@ -14,7 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing(3),
     overflowX: "auto"
   },
   table: {
@@ -22,33 +22,26 @@ const styles = theme => ({
   }
 })
 
-const customers = [
-  {
-  'id': 1,
-  'image' : 'https://placeimg.com/64/64/1',
-  'name': 'Jeon',
-  'birthday': '870912',
-  'gender' : 'male',
-  'job' : 'worker'
-  },
-  {
-    'id': 2,
-    'image' : 'https://placeimg.com/64/64/2',
-    'name': 'Ko',
-    'birthday': '880225',
-    'gender' : 'female',
-    'job' : 'owner'
-   },
-   {
-      'id': 3,
-      'image' : 'https://placeimg.com/64/64/3',
-      'name': 'Koo',
-      'birthday': '161110',
-      'gender' : 'male',
-      'job' : 'pet'
-  }
-]
+
+
 class App extends Component {
+
+  state = {
+      customers: ""
+  }
+
+  componentDidMount(){
+    this.callApi()
+    .then(res => this.setState({customers: res}))
+    .catch(err => console.log(err));
+  }
+
+  callApi = async() => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
+
   render(){
     const { classes } = this.props;
   return (
@@ -67,7 +60,7 @@ class App extends Component {
         <TableBody>
         {
         //map은 key값이 필수, 배열에 접근하여 출력.
-        customers.map(c => {
+       this.state.customers ? this.state.customers.map(c => {
           return <Customer
             key={c.id}
             id={c.id}
@@ -77,7 +70,7 @@ class App extends Component {
             gender = {c.gender}
             job={c.job}
           />
-        })
+        }) : ""
       }
         </TableBody>
       </Table>
